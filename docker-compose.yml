@@ -1,0 +1,149 @@
+# AllServices — ALS Marketing UK Ltd
+# Copyright (c) 2026. All rights reserved.
+# Developer: linkst
+#
+# Local development stack running EU primary and NA replica API instances with their region-bound datastores.
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: as-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: allservices
+      POSTGRES_PASSWORD: allservices
+      POSTGRES_DB: allservices
+    command:
+      - postgres
+      - -c
+      - wal_level=replica
+      - -c
+      - max_connections=200
+      - -c
+      - shared_buffers=256MB
+      - -c
+      - log_min_duration_statement=100
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U allservices -d allservices']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis-eu:
+    image: redis:7-alpine
+    container_name: as-redis-eu
+    restart: unless-stopped
+    command:
+      - redis-server
+      - --requirepass
+      - allservices
+      - --maxmemory
+      - 256mb
+      - --maxmemory-policy
+      - allkeys-lru
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis-eu-data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', '-a', 'allservices', 'ping']
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  redis-na:
+    image: redis:7-alpine
+    container_name: as-redis-na
+    restart: unless-stopped
+    command:
+      - redis-server
+      - --requirepass
+      - allservices
+      - --maxmemory
+      - 128mb
+      - --maxmemory-policy
+      - allkeys-lru
+    ports:
+      - '6380:6379'
+    volumes:
+      - redis-na-data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', '-a', 'allservices', 'ping']
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  api-eu:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: as-api-eu
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: '3000'
+      REGION: eu
+      REGION_ROLE: primary
+      INTERNAL_API_SECRET: ${INTERNAL_API_SECRET}
+      DATABASE_WRITE_URL: postgresql://allservices:allservices@postgres:5432/allservices
+      DATABASE_READ_URL: postgresql://allservices:allservices@postgres:5432/allservices
+      REDIS_URL: redis://:allservices@redis-eu:6379
+      REDIS_KEY_PREFIX: as:eu:
+      JWT_PRIVATE_KEY: ${JWT_PRIVATE_KEY}
+      JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY}
+      JWT_ISSUER: allservices
+      JWT_AUDIENCE: allservices-api
+      CRYPTO_MASTER_KEY: ${CRYPTO_MASTER_KEY}
+      SENTRY_REGION: eu
+      SMTP_FROM: no-reply@allservices.cc
+      ALLOWED_ORIGINS: https://allservices.cc,https://dashboard.allservices.cc
+    ports:
+      - '3000:3000'
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis-eu:
+        condition: service_healthy
+
+  api-na:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: as-api-na
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: '3000'
+      REGION: na
+      REGION_ROLE: replica
+      PRIMARY_API_URL: http://api-eu:3000
+      INTERNAL_API_SECRET: ${INTERNAL_API_SECRET}
+      DATABASE_WRITE_URL: postgresql://allservices:allservices@postgres:5432/allservices
+      DATABASE_READ_URL: postgresql://allservices:allservices@postgres:5432/allservices
+      REDIS_URL: redis://:allservices@redis-na:6379
+      REDIS_KEY_PREFIX: as:na:
+      JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY}
+      JWT_ISSUER: allservices
+      JWT_AUDIENCE: allservices-api
+      CRYPTO_MASTER_KEY: ${CRYPTO_MASTER_KEY}
+      SENTRY_REGION: na
+      SMTP_FROM: no-reply@allservices.cc
+      ALLOWED_ORIGINS: https://allservices.cc,https://dashboard.allservices.cc
+    ports:
+      - '3001:3000'
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis-na:
+        condition: service_healthy
+      api-eu:
+        condition: service_started
+
+volumes:
+  postgres-data:
+  redis-eu-data:
+  redis-na-data:

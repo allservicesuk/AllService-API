@@ -1,0 +1,23 @@
+# AllServices — ALS Marketing UK Ltd
+# Copyright (c) 2026. All rights reserved.
+# Developer: linkst
+#
+# Paths excluded from the Docker build context to keep image layers small and secrets out of builds.
+
+node_modules
+.git
+.github
+.env
+.env.*
+coverage
+test
+dist
+.husky
+.vscode
+.idea
+*.md
+!README.md
+.DS_Store
+.eslintcache
+npm-debug.log*
+pnpm-debug.log*

@@ -1,0 +1,42 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true,
+    "exactOptionalPropertyTypes": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "target": "ES2022",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "baseUrl": "./",
+    "paths": {
+      "@common/*": ["src/common/*"],
+      "@config/*": ["src/config/*"],
+      "@modules/*": ["src/modules/*"],
+      "@database/*": ["src/database/*"],
+      "@guards/*": ["src/common/guards/*"],
+      "@interceptors/*": ["src/common/interceptors/*"],
+      "@filters/*": ["src/common/filters/*"],
+      "@decorators/*": ["src/common/decorators/*"],
+      "@pipes/*": ["src/common/pipes/*"],
+      "@types/*": ["src/common/types/*"]
+    },
+    "skipLibCheck": true,
+    "resolveJsonModule": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "test"]
+}
