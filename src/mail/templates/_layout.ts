@@ -27,6 +27,8 @@ export function renderHtmlLayout(bodyHtml: string, options: LayoutOptions): stri
     '.body{font-size:15px;line-height:1.6;color:#333f4d}',
     '.cta{display:inline-block;margin:20px 0;padding:12px 24px;background:#ff8fbb;color:#141414;text-decoration:none;border-radius:8px;font-weight:600}',
     '.footer{margin-top:24px;font-size:12px;color:#6b7785;text-align:center}',
+    '.footer a{color:#141414;text-decoration:none}',
+    'a{color:#141414}',
     '.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;color:#6b7785}',
     '</style></head><body>',
     '<div class="wrap"><div class="card">',
