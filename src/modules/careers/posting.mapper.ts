@@ -26,6 +26,7 @@ export class PostingMapper {
       salaryMin: posting.salaryMin,
       salaryMax: posting.salaryMax,
       salaryCurrency: posting.salaryCurrency,
+      salaryPeriod: posting.salaryPeriod,
       cvRequired: posting.cvRequired,
       customFields: (posting.customFields as unknown[] | null) ?? null,
       status: posting.status,

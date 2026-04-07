@@ -46,6 +46,7 @@ export class PostingService {
         salaryMin: dto.salaryMin ?? null,
         salaryMax: dto.salaryMax ?? null,
         salaryCurrency: dto.salaryCurrency ?? null,
+        salaryPeriod: dto.salaryPeriod ?? null,
         cvRequired: dto.cvRequired ?? true,
         ...(dto.customFields
           ? { customFields: JSON.parse(JSON.stringify(dto.customFields)) as object }
@@ -156,6 +157,7 @@ export class PostingService {
     if (dto.salaryMin !== undefined) data.salaryMin = dto.salaryMin;
     if (dto.salaryMax !== undefined) data.salaryMax = dto.salaryMax;
     if (dto.salaryCurrency !== undefined) data.salaryCurrency = dto.salaryCurrency;
+    if (dto.salaryPeriod !== undefined) data.salaryPeriod = dto.salaryPeriod;
     if (dto.cvRequired !== undefined) data.cvRequired = dto.cvRequired;
     if (dto.customFields !== undefined)
       data.customFields = JSON.parse(JSON.stringify(dto.customFields)) as object;

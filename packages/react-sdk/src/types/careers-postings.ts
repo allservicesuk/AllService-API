@@ -10,6 +10,7 @@ import type {
   JobPostingStatusValue,
   JobPostingTypeValue,
   JobPostingWorkModeValue,
+  SalaryPeriodValue,
 } from './enums';
 
 export interface PostingResponse {
@@ -25,6 +26,7 @@ export interface PostingResponse {
   readonly salaryMin: number | null;
   readonly salaryMax: number | null;
   readonly salaryCurrency: string | null;
+  readonly salaryPeriod: string | null;
   readonly cvRequired: boolean;
   readonly customFields: CustomFieldDefinition[] | null;
   readonly status: string;
@@ -45,6 +47,7 @@ export interface CreatePostingRequest {
   readonly salaryMin?: number;
   readonly salaryMax?: number;
   readonly salaryCurrency?: string;
+  readonly salaryPeriod?: SalaryPeriodValue;
   readonly closesAt?: string;
   readonly cvRequired?: boolean;
   readonly customFields?: readonly CustomFieldDefinition[];
@@ -61,6 +64,7 @@ export interface UpdatePostingRequest {
   readonly salaryMin?: number;
   readonly salaryMax?: number;
   readonly salaryCurrency?: string;
+  readonly salaryPeriod?: SalaryPeriodValue;
   readonly closesAt?: string;
   readonly cvRequired?: boolean;
   readonly customFields?: readonly CustomFieldDefinition[];

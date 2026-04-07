@@ -136,6 +136,11 @@ export class CreatePostingDto {
   @Length(CURRENCY_LENGTH, CURRENCY_LENGTH)
   readonly salaryCurrency?: string;
 
+  @ApiPropertyOptional({ enum: ['HOURLY', 'WEEKLY', 'BIWEEKLY', 'MONTHLY', 'YEARLY'] })
+  @IsOptional()
+  @IsEnum({ HOURLY: 'HOURLY', WEEKLY: 'WEEKLY', BIWEEKLY: 'BIWEEKLY', MONTHLY: 'MONTHLY', YEARLY: 'YEARLY' })
+  readonly salaryPeriod?: 'HOURLY' | 'WEEKLY' | 'BIWEEKLY' | 'MONTHLY' | 'YEARLY';
+
   @ApiPropertyOptional()
   @IsOptional()
   @IsISO8601()

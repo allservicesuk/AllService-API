@@ -97,6 +97,7 @@ export {
   JobPostingStatus,
   JobPostingType,
   JobPostingWorkMode,
+  SalaryPeriod,
   ApplicationStatus,
   MessageSenderType,
   Role,

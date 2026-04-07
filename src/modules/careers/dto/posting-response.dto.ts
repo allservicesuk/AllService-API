@@ -44,6 +44,9 @@ export class PostingResponseDto {
   @ApiPropertyOptional({ type: String, nullable: true })
   readonly salaryCurrency!: string | null;
 
+  @ApiPropertyOptional({ enum: ['HOURLY', 'WEEKLY', 'BIWEEKLY', 'MONTHLY', 'YEARLY'], nullable: true })
+  readonly salaryPeriod!: string | null;
+
   @ApiProperty()
   readonly cvRequired!: boolean;
 

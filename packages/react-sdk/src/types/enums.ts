@@ -34,6 +34,17 @@ export const JobPostingWorkMode = {
 export type JobPostingWorkModeValue =
   (typeof JobPostingWorkMode)[keyof typeof JobPostingWorkMode];
 
+export const SalaryPeriod = {
+  HOURLY: 'HOURLY',
+  WEEKLY: 'WEEKLY',
+  BIWEEKLY: 'BIWEEKLY',
+  MONTHLY: 'MONTHLY',
+  YEARLY: 'YEARLY',
+} as const;
+
+export type SalaryPeriodValue =
+  (typeof SalaryPeriod)[keyof typeof SalaryPeriod];
+
 export const ApplicationStatus = {
   DRAFT: 'DRAFT',
   SUBMITTED: 'SUBMITTED',

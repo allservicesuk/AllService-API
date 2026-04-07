@@ -123,6 +123,14 @@ enum JobPostingWorkMode {
   ONSITE
 }
 
+enum SalaryPeriod {
+  HOURLY
+  WEEKLY
+  BIWEEKLY
+  MONTHLY
+  YEARLY
+}
+
 enum ApplicationStatus {
   DRAFT
   SUBMITTED
@@ -154,6 +162,7 @@ model JobPosting {
   salaryMin   Int?
   salaryMax   Int?
   salaryCurrency String?        @db.VarChar(3)
+  salaryPeriod SalaryPeriod?
   cvRequired  Boolean           @default(true)
   customFields Json?
   status      JobPostingStatus  @default(DRAFT)
