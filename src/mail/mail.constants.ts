@@ -20,6 +20,7 @@ export const MailJobName = {
   SEND_APPLICATION_NEW_MESSAGE: 'send-application-new-message',
   SEND_APPLICATION_INTERVIEW_INVITE: 'send-application-interview-invite',
   SEND_APPLICATION_REJECTED: 'send-application-rejected',
+  SEND_APPLICATION_ACCESS: 'send-application-access',
 } as const;
 
 export type MailJobNameCode = (typeof MailJobName)[keyof typeof MailJobName];

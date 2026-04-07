@@ -139,7 +139,7 @@ export class ApplicantController {
       const rawToken = await this.tokenService.generateMagicLinkToken(application.id);
       const magicLinkUrl = this.tokenService.buildMagicLinkUrl(rawToken);
 
-      await this.mailService.sendApplicationReceivedEmail({
+      await this.mailService.sendApplicationAccessEmail({
         to: application.applicantEmail,
         name: application.applicantName,
         jobTitle: posting.title,

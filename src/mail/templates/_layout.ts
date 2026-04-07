@@ -25,7 +25,7 @@ export function renderHtmlLayout(bodyHtml: string, options: LayoutOptions): stri
     '.card{background:#ffffff;border-radius:12px;padding:32px;box-shadow:0 1px 3px rgba(16,24,40,0.08)}',
     '.brand{font-size:20px;font-weight:700;margin-bottom:24px;color:#0b1221}',
     '.body{font-size:15px;line-height:1.6;color:#333f4d}',
-    '.cta{display:inline-block;margin:20px 0;padding:12px 24px;background:#2563eb;color:#ffffff;text-decoration:none;border-radius:8px;font-weight:600}',
+    '.cta{display:inline-block;margin:20px 0;padding:12px 24px;background:#ff8fbb;color:#141414;text-decoration:none;border-radius:8px;font-weight:600}',
     '.footer{margin-top:24px;font-size:12px;color:#6b7785;text-align:center}',
     '.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;color:#6b7785}',
     '</style></head><body>',

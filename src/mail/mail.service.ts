@@ -15,6 +15,7 @@ import regionConfig from '@config/region.config';
 import { MetricsService } from '../observability/metrics.service';
 
 import type { AccountLockedInput } from './dto/account-locked-input.dto';
+import type { ApplicationAccessInput } from './dto/application-access-input.dto';
 import type { ApplicationInterviewInviteInput } from './dto/application-interview-invite-input.dto';
 import type { ApplicationNewMessageInput } from './dto/application-new-message-input.dto';
 import type { ApplicationReceivedInput } from './dto/application-received-input.dto';
@@ -94,6 +95,10 @@ export class MailService {
 
   async sendApplicationRejectedEmail(input: ApplicationRejectedInput): Promise<void> {
     await this.enqueue(MailJobName.SEND_APPLICATION_REJECTED, input);
+  }
+
+  async sendApplicationAccessEmail(input: ApplicationAccessInput): Promise<void> {
+    await this.enqueue(MailJobName.SEND_APPLICATION_ACCESS, input);
   }
 
   private async enqueue(

@@ -16,6 +16,7 @@ import mailConfig from '@config/mail.config';
 import regionConfig from '@config/region.config';
 
 import { AccountLockedInput } from '../../mail/dto/account-locked-input.dto';
+import { ApplicationAccessInput } from '../../mail/dto/application-access-input.dto';
 import { ApplicationInterviewInviteInput } from '../../mail/dto/application-interview-invite-input.dto';
 import { ApplicationNewMessageInput } from '../../mail/dto/application-new-message-input.dto';
 import { ApplicationReceivedInput } from '../../mail/dto/application-received-input.dto';
@@ -33,6 +34,7 @@ import { SmtpTransport } from '../../mail/smtp.transport';
 import { accountLockedTemplate } from '../../mail/templates/account-locked.template';
 import { applicationInterviewInviteTemplate } from '../../mail/templates/application-interview-invite.template';
 import { applicationNewMessageTemplate } from '../../mail/templates/application-new-message.template';
+import { applicationAccessTemplate } from '../../mail/templates/application-access.template';
 import { applicationReceivedTemplate } from '../../mail/templates/application-received.template';
 import { applicationRejectedTemplate } from '../../mail/templates/application-rejected.template';
 import { applicationStatusChangedTemplate } from '../../mail/templates/application-status-changed.template';
@@ -204,6 +206,15 @@ export class MailProcessor extends WorkerHost {
           subject: applicationRejectedTemplate.subject(input.jobTitle),
           text: applicationRejectedTemplate.text(input, layout),
           html: applicationRejectedTemplate.html(input, layout),
+        };
+      }
+      case MailJobName.SEND_APPLICATION_ACCESS: {
+        const input = await this.validatePayload(ApplicationAccessInput, payload, jobName);
+        return {
+          to: input.to,
+          subject: applicationAccessTemplate.subject(input.jobTitle),
+          text: applicationAccessTemplate.text(input, layout),
+          html: applicationAccessTemplate.html(input, layout),
         };
       }
       default:
