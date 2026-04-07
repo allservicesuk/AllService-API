@@ -64,6 +64,16 @@ export class SubmitApplicationDto {
 
   @ApiPropertyOptional({ description: 'Answers to custom fields defined on the posting' })
   @IsOptional()
+  @Transform(({ value }: { value: unknown }): unknown => {
+    if (typeof value === 'string') {
+      try {
+        return JSON.parse(value) as unknown;
+      } catch {
+        return value;
+      }
+    }
+    return value;
+  })
   @IsObject()
   readonly customResponses?: Record<string, string | number | boolean>;
 }
