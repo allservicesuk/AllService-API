@@ -76,6 +76,7 @@ async function bootstrap(): Promise<void> {
       'X-Idempotency-Key',
       'X-Client-Version',
       'X-Client-Platform',
+      'X-Region',
     ],
     exposedHeaders: [
       'X-Request-Id',
