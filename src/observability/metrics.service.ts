@@ -12,6 +12,7 @@ const HTTP_BUCKETS = [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10];
 const DB_BUCKETS = [0.001, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5];
 const REDIS_BUCKETS = [0.0005, 0.001, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5];
 const MAIL_BUCKETS = [0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10, 30];
+const WEBHOOK_BUCKETS = [0.1, 0.25, 0.5, 1, 2.5, 5, 10, 30, 60];
 
 @Injectable()
 export class MetricsService implements OnModuleInit {
@@ -34,6 +35,8 @@ export class MetricsService implements OnModuleInit {
   readonly queueWaitingJobs: Gauge<'queue' | 'region'>;
   readonly queueDepthTotal: Gauge<'queue' | 'state' | 'region'>;
   readonly queueOldestWaitingAgeSeconds: Gauge<'queue' | 'region'>;
+  readonly webhookDeliveryTotal: Counter<'status' | 'region'>;
+  readonly webhookDeliveryDuration: Histogram<'region'>;
 
   constructor() {
     this.httpRequestDuration = new Histogram({
@@ -146,6 +149,19 @@ export class MetricsService implements OnModuleInit {
       name: 'queue_oldest_waiting_age_seconds',
       help: 'Age of the oldest waiting job in seconds',
       labelNames: ['queue', 'region'],
+      registers: [this.registry],
+    });
+    this.webhookDeliveryTotal = new Counter({
+      name: 'webhook_delivery_total',
+      help: 'Total webhook delivery attempts by status',
+      labelNames: ['status', 'region'],
+      registers: [this.registry],
+    });
+    this.webhookDeliveryDuration = new Histogram({
+      name: 'webhook_delivery_duration_seconds',
+      help: 'Webhook delivery duration in seconds',
+      labelNames: ['region'],
+      buckets: WEBHOOK_BUCKETS,
       registers: [this.registry],
     });
   }

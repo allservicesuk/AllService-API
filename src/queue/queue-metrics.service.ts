@@ -38,6 +38,7 @@ export class QueueMetricsService implements OnModuleInit, OnModuleDestroy {
     @InjectQueue(QueueName.MAIL) private readonly mailQueue: Queue,
     @InjectQueue(QueueName.AUDIT) private readonly auditQueue: Queue,
     @InjectQueue(QueueName.MAINTENANCE) private readonly maintenanceQueue: Queue,
+    @InjectQueue(QueueName.WEBHOOK) private readonly webhookQueue: Queue,
     private readonly metrics: MetricsService,
     @Inject(regionConfig.KEY) private readonly region: ConfigType<typeof regionConfig>,
   ) {}
@@ -65,6 +66,7 @@ export class QueueMetricsService implements OnModuleInit, OnModuleDestroy {
       this.pollQueue(QueueName.MAIL, this.mailQueue),
       this.pollQueue(QueueName.AUDIT, this.auditQueue),
       this.pollQueue(QueueName.MAINTENANCE, this.maintenanceQueue),
+      this.pollQueue(QueueName.WEBHOOK, this.webhookQueue),
     ]);
   }
 

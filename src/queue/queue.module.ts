@@ -22,17 +22,20 @@ import regionConfig from '@config/region.config';
 
 import { MailModule } from '../mail/mail.module';
 import { CareersModule } from '../modules/careers/careers.module';
+import { WebhookModule } from '../modules/webhook/webhook.module';
 
 import { bullConnectionProvider } from './queue-connection.provider';
 import {
   AuditQueueEventsListener,
   MailQueueEventsListener,
   MaintenanceQueueEventsListener,
+  WebhookQueueEventsListener,
 } from './queue-events.listener';
 import { QueueMetricsService } from './queue-metrics.service';
 import { AuditProcessor } from './processors/audit.processor';
 import { MailProcessor } from './processors/mail.processor';
 import { MaintenanceProcessor } from './processors/maintenance.processor';
+import { WebhookProcessor } from './processors/webhook.processor';
 import { DEFAULT_JOB_OPTIONS, QueueName, buildBullPrefix } from './queue.constants';
 import { BULL_CONNECTION } from './queue.tokens';
 
@@ -74,9 +77,11 @@ class QueueConnectionModule {}
       { name: QueueName.MAIL },
       { name: QueueName.AUDIT },
       { name: QueueName.MAINTENANCE },
+      { name: QueueName.WEBHOOK },
     ),
     MailModule,
     forwardRef(() => CareersModule),
+    forwardRef(() => WebhookModule),
   ],
   providers: [
     BullConnectionLifecycle,
@@ -86,6 +91,8 @@ class QueueConnectionModule {}
     MailQueueEventsListener,
     AuditQueueEventsListener,
     MaintenanceQueueEventsListener,
+    WebhookQueueEventsListener,
+    WebhookProcessor,
     QueueMetricsService,
   ],
   exports: [BullModule, QueueConnectionModule],

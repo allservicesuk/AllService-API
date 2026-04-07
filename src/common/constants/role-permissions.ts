@@ -55,6 +55,9 @@ export const ROLE_PERMISSIONS: Record<RoleCode, readonly PermissionCode[]> = {
     Permission.CAREER_APPLICATION_READ,
     Permission.CAREER_APPLICATION_WRITE,
     Permission.CAREER_ANALYTICS_READ,
+    Permission.WEBHOOK_READ,
+    Permission.WEBHOOK_WRITE,
+    Permission.WEBHOOK_DELETE,
   ],
 } as const;
 

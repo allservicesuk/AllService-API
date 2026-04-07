@@ -180,3 +180,30 @@ export class MaintenanceQueueEventsListener extends BaseQueueEventsListener {
     this.handleStalled(args);
   }
 }
+
+@QueueEventsListener(QueueName.WEBHOOK)
+export class WebhookQueueEventsListener extends BaseQueueEventsListener {
+  constructor(
+    @InjectQueue(QueueName.WEBHOOK) queue: Queue,
+    metrics: MetricsService,
+    sentry: SentryService,
+    @Inject(regionConfig.KEY) region: ConfigType<typeof regionConfig>,
+  ) {
+    super(QueueName.WEBHOOK, queue, metrics, sentry, region);
+  }
+
+  @OnQueueEvent('completed')
+  async onCompleted(args: CompletedEventArgs): Promise<void> {
+    await this.handleCompleted(args);
+  }
+
+  @OnQueueEvent('failed')
+  async onFailed(args: FailedEventArgs): Promise<void> {
+    await this.handleFailed(args);
+  }
+
+  @OnQueueEvent('stalled')
+  onStalled(args: StalledEventArgs): void {
+    this.handleStalled(args);
+  }
+}

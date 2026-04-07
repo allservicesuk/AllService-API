@@ -2,7 +2,7 @@
 // Copyright (c) 2026. All rights reserved.
 // Developer: linkst
 //
-// Prisma schema for all models: User, Auth, Tenant, and Careers (JobPosting, Application, etc).
+// Prisma schema for all models: User, Auth, Tenant, Careers, and Webhooks.
 
 generator client {
   provider = "prisma-client-js"
@@ -268,4 +268,79 @@ model ApplicantToken {
   @@index([applicationId])
   @@index([expiresAt])
   @@map("applicant_tokens")
+}
+
+enum WebhookEndpointStatus {
+  ACTIVE
+  PAUSED
+  DISABLED
+}
+
+enum WebhookDeliveryStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  CIRCUIT_OPEN
+}
+
+model WebhookEndpoint {
+  id           String                @id @default(uuid()) @db.Uuid
+  url          String                @db.VarChar(2048)
+  description  String?               @db.VarChar(500)
+  secret       String                @db.VarChar(128)
+  eventTypes   String[]
+  status       WebhookEndpointStatus @default(ACTIVE)
+  metadata     Json?
+  createdBy    String                @db.Uuid
+  failureCount Int                   @default(0)
+  lastFailedAt DateTime?
+  circuitState String                @default("CLOSED") @db.VarChar(20)
+  circuitOpenedAt DateTime?
+  createdAt    DateTime              @default(now())
+  updatedAt    DateTime              @updatedAt
+
+  events WebhookEvent[]
+
+  @@index([status])
+  @@index([createdAt])
+  @@map("webhook_endpoints")
+}
+
+model WebhookEvent {
+  id         String   @id @default(uuid()) @db.Uuid
+  endpointId String   @db.Uuid
+  eventType  String   @db.VarChar(100)
+  payload    Json
+  idempotencyKey String @unique @db.VarChar(64)
+  createdAt  DateTime @default(now())
+
+  endpoint   WebhookEndpoint   @relation(fields: [endpointId], references: [id], onDelete: Cascade)
+  deliveries WebhookDelivery[]
+
+  @@index([endpointId])
+  @@index([eventType])
+  @@index([createdAt])
+  @@map("webhook_events")
+}
+
+model WebhookDelivery {
+  id             String                @id @default(uuid()) @db.Uuid
+  eventId        String                @db.Uuid
+  attemptNumber  Int
+  status         WebhookDeliveryStatus @default(PENDING)
+  httpStatusCode Int?
+  requestHeaders Json?
+  responseBody   String?               @db.Text
+  latencyMs      Int?
+  errorMessage   String?               @db.Text
+  nextRetryAt    DateTime?
+  createdAt      DateTime              @default(now())
+
+  event WebhookEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([eventId])
+  @@index([status])
+  @@index([createdAt])
+  @@index([nextRetryAt])
+  @@map("webhook_deliveries")
 }

@@ -30,6 +30,9 @@ export const Permission = {
   CAREER_APPLICATION_READ: 'career:application:read',
   CAREER_APPLICATION_WRITE: 'career:application:write',
   CAREER_ANALYTICS_READ: 'career:analytics:read',
+  WEBHOOK_READ: 'webhook:read',
+  WEBHOOK_WRITE: 'webhook:write',
+  WEBHOOK_DELETE: 'webhook:delete',
 } as const;
 
 export type PermissionCode = (typeof Permission)[keyof typeof Permission];

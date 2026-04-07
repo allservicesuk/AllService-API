@@ -18,17 +18,21 @@ import { PRISMA_WRITE } from '../../database/database.tokens';
 import { ApplicantTokenService } from '../../modules/careers/applicant-token.service';
 import { ApplicationService } from '../../modules/careers/application.service';
 import { PostingService } from '../../modules/careers/posting.service';
+import { WebhookService } from '../../modules/webhook/webhook.service';
+import { WebhookCircuitBreakerService } from '../../modules/webhook/webhook-circuit-breaker.service';
 import { REDIS_CLIENT } from '../../redis/redis.tokens';
 import {
   CLOSE_EXPIRED_POSTINGS_EVERY_MS,
   MAINTENANCE_WORKER_CONCURRENCY,
   MaintenanceJobName,
   type MaintenanceJobNameCode,
+  PROBE_WEBHOOK_CIRCUITS_EVERY_MS,
   PRUNE_APPLICANT_TOKENS_EVERY_MS,
   PRUNE_DRAFT_APPLICATIONS_EVERY_MS,
   PRUNE_EXPIRED_SESSIONS_EVERY_MS,
   PRUNE_ORPHANED_CRYPTO_EVERY_MS,
   PRUNE_REFRESH_FAMILIES_EVERY_MS,
+  PRUNE_WEBHOOK_DELIVERIES_EVERY_MS,
   QueueName,
   REPLAY_DEAD_LETTER_EVERY_MS,
   buildAuditDeadLetterKey,
@@ -61,6 +65,8 @@ export class MaintenanceProcessor extends WorkerHost implements OnModuleInit {
     private readonly postingService: PostingService,
     private readonly applicantTokenService: ApplicantTokenService,
     private readonly applicationService: ApplicationService,
+    private readonly webhookService: WebhookService,
+    private readonly webhookCircuitBreaker: WebhookCircuitBreakerService,
   ) {
     super();
   }
@@ -100,6 +106,14 @@ export class MaintenanceProcessor extends WorkerHost implements OnModuleInit {
       MaintenanceJobName.PRUNE_DRAFT_APPLICATIONS,
       PRUNE_DRAFT_APPLICATIONS_EVERY_MS,
     );
+    await this.scheduleRepeating(
+      MaintenanceJobName.PRUNE_WEBHOOK_DELIVERIES,
+      PRUNE_WEBHOOK_DELIVERIES_EVERY_MS,
+    );
+    await this.scheduleRepeating(
+      MaintenanceJobName.PROBE_WEBHOOK_CIRCUITS,
+      PROBE_WEBHOOK_CIRCUITS_EVERY_MS,
+    );
     this.logger.log(`maintenance.scheduler.ready region=${this.region.region}`);
   }
 
@@ -130,6 +144,10 @@ export class MaintenanceProcessor extends WorkerHost implements OnModuleInit {
         return { processed: await this.pruneExpiredApplicantTokens() };
       case MaintenanceJobName.PRUNE_DRAFT_APPLICATIONS:
         return { processed: await this.pruneDraftApplications() };
+      case MaintenanceJobName.PRUNE_WEBHOOK_DELIVERIES:
+        return { processed: await this.pruneWebhookDeliveries() };
+      case MaintenanceJobName.PROBE_WEBHOOK_CIRCUITS:
+        return { processed: await this.probeWebhookCircuits() };
       default:
         throw new Error(`maintenance.processor.unknown_job name=${String(name)}`);
     }
@@ -255,5 +273,27 @@ export class MaintenanceProcessor extends WorkerHost implements OnModuleInit {
     } catch {
       return null;
     }
+  }
+
+  private async pruneWebhookDeliveries(): Promise<number> {
+    const deliveries = await this.webhookService.pruneOldDeliveries();
+    const events = await this.webhookService.pruneOldEvents();
+    const total = deliveries + events;
+    if (total > 0) {
+      this.logger.log(
+        `maintenance.prune_webhook.done deliveries=${deliveries} events=${events} region=${this.region.region}`,
+      );
+    }
+    return total;
+  }
+
+  private async probeWebhookCircuits(): Promise<number> {
+    const count = await this.webhookCircuitBreaker.probeOpenCircuits();
+    if (count > 0) {
+      this.logger.log(
+        `maintenance.probe_webhook_circuits.done transitioned=${count} region=${this.region.region}`,
+      );
+    }
+    return count;
   }
 }

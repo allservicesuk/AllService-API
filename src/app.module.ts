@@ -28,6 +28,7 @@ import { RequestIdMiddleware } from './common/middleware/request-id.middleware';
 import { RedisThrottlerStorage } from './common/throttler/redis-throttler.storage';
 import { ThrottlerStorageModule } from './common/throttler/throttler-storage.module';
 import careersConfig from '@config/careers.config';
+import webhookConfig from '@config/webhook.config';
 import appConfig from '@config/app.config';
 import argon2Config from '@config/argon2.config';
 import { configValidationOptions, configValidationSchema } from '@config/config.schema';
@@ -49,6 +50,7 @@ import { HealthModule } from './health/health.module';
 import { MailModule } from './mail/mail.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { CareersModule } from './modules/careers/careers.module';
+import { WebhookModule } from './modules/webhook/webhook.module';
 import { UserModule } from './modules/user/user.module';
 import { ObservabilityModule } from './observability/observability.module';
 import { QueueModule } from './queue/queue.module';
@@ -73,6 +75,7 @@ import { RegionModule } from './region/region.module';
         posthogConfig,
         argon2Config,
         careersConfig,
+        webhookConfig,
       ],
       validationSchema: configValidationSchema,
       validationOptions: configValidationOptions,
@@ -112,6 +115,7 @@ import { RegionModule } from './region/region.module';
     UserModule,
     AuthModule,
     CareersModule,
+    WebhookModule,
   ],
   providers: [
     { provide: APP_FILTER, useClass: AllExceptionsFilter },

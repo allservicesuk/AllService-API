@@ -99,6 +99,16 @@ export const configValidationSchema = Joi.object({
   CAREERS_APPLY_WEB_URL: Joi.string()
     .uri({ scheme: ['http', 'https'] })
     .default('https://apply.allservices.cc'),
+
+  WEBHOOK_DELIVERY_TIMEOUT_MS: Joi.number().integer().min(1000).default(30000),
+  WEBHOOK_MAX_RETRIES: Joi.number().integer().min(0).max(20).default(5),
+  WEBHOOK_RETRY_BASE_DELAY_MS: Joi.number().integer().min(1000).default(10000),
+  WEBHOOK_RETRY_MAX_DELAY_MS: Joi.number().integer().min(60000).default(3600000),
+  WEBHOOK_CIRCUIT_BREAKER_THRESHOLD: Joi.number().integer().min(1).default(10),
+  WEBHOOK_CIRCUIT_BREAKER_RESET_MS: Joi.number().integer().min(60000).default(300000),
+  WEBHOOK_RETENTION_DAYS: Joi.number().integer().min(1).default(90),
+  WEBHOOK_WORKER_CONCURRENCY: Joi.number().integer().min(1).max(20).default(3),
+  WEBHOOK_MAX_PAYLOAD_BYTES: Joi.number().integer().min(1024).default(65536),
 });
 
 export const configValidationOptions: Joi.ValidationOptions = {

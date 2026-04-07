@@ -11,6 +11,7 @@ export const QueueName = {
   MAIL: 'mail',
   AUDIT: 'audit',
   MAINTENANCE: 'maintenance',
+  WEBHOOK: 'webhook',
 } as const;
 
 export type QueueNameCode = (typeof QueueName)[keyof typeof QueueName];
@@ -23,6 +24,8 @@ export const MaintenanceJobName = {
   CLOSE_EXPIRED_POSTINGS: 'close-expired-postings',
   PRUNE_EXPIRED_APPLICANT_TOKENS: 'prune-expired-applicant-tokens',
   PRUNE_DRAFT_APPLICATIONS: 'prune-draft-applications',
+  PRUNE_WEBHOOK_DELIVERIES: 'prune-webhook-deliveries',
+  PROBE_WEBHOOK_CIRCUITS: 'probe-webhook-circuits',
 } as const;
 
 export type MaintenanceJobNameCode = (typeof MaintenanceJobName)[keyof typeof MaintenanceJobName];
@@ -41,6 +44,10 @@ export const REPLAY_DEAD_LETTER_EVERY_MS = 60 * 60 * 1000;
 export const CLOSE_EXPIRED_POSTINGS_EVERY_MS = 15 * 60 * 1000;
 export const PRUNE_APPLICANT_TOKENS_EVERY_MS = 60 * 60 * 1000;
 export const PRUNE_DRAFT_APPLICATIONS_EVERY_MS = 6 * 60 * 60 * 1000;
+
+export const WEBHOOK_WORKER_CONCURRENCY = 3;
+export const PRUNE_WEBHOOK_DELIVERIES_EVERY_MS = 24 * 60 * 60 * 1000;
+export const PROBE_WEBHOOK_CIRCUITS_EVERY_MS = 5 * 60 * 1000;
 
 const REMOVE_ON_COMPLETE_AGE_SECONDS = 3_600;
 const REMOVE_ON_COMPLETE_COUNT = 1_000;
