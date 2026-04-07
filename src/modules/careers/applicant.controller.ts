@@ -128,9 +128,11 @@ export class ApplicantController {
   @ApiOperation({ summary: 'Request a new magic-link access token via email' })
   @ApiResponse({ status: 200, description: 'Access link sent if application exists' })
   async requestAccess(@Body() dto: RequestAccessDto): Promise<{ sent: boolean }> {
-    const application = await this.applicationService
-      .findByEmailAndPosting(dto.email, dto.jobPostingId)
-      .catch(() => null);
+    const application = dto.jobPostingId
+      ? await this.applicationService
+          .findByEmailAndPosting(dto.email, dto.jobPostingId)
+          .catch(() => null)
+      : await this.applicationService.findLatestByEmail(dto.email);
 
     if (application) {
       const posting = await this.postingService.findById(application.jobPostingId);

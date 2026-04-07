@@ -222,6 +222,13 @@ export class ApplicationService {
     return application;
   }
 
+  async findLatestByEmail(email: string): Promise<Application | null> {
+    return this.prismaRead.application.findFirst({
+      where: { applicantEmail: email },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
   async findById(id: string): Promise<Application> {
     const application = await this.prismaRead.application.findUnique({
       where: { id },

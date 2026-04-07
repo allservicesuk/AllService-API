@@ -49,7 +49,7 @@ export interface SubmitApplicationRequest {
 
 export interface RequestAccessRequest {
   readonly email: string;
-  readonly jobPostingId: string;
+  readonly jobPostingId?: string;
 }
 
 export interface ChangeStatusRequest {

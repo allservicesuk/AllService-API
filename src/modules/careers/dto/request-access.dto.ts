@@ -5,9 +5,9 @@
  *
  * Validation DTO for requesting a new magic-link access token via email.
  */
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsEmail, IsUUID } from 'class-validator';
+import { IsEmail, IsOptional, IsUUID } from 'class-validator';
 
 export class RequestAccessDto {
   @ApiProperty()
@@ -17,7 +17,8 @@ export class RequestAccessDto {
   )
   readonly email!: string;
 
-  @ApiProperty({ format: 'uuid' })
+  @ApiPropertyOptional({ format: 'uuid' })
+  @IsOptional()
   @IsUUID()
-  readonly jobPostingId!: string;
+  readonly jobPostingId?: string;
 }
