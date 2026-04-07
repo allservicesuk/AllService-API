@@ -25,6 +25,6 @@ import { WebhookMapper } from './webhook.mapper';
     WebhookEventsListener,
     WebhookMapper,
   ],
-  exports: [WebhookService, WebhookCircuitBreakerService],
+  exports: [WebhookService, WebhookDeliveryService, WebhookCircuitBreakerService, WebhookSigningService],
 })
 export class WebhookModule {}
