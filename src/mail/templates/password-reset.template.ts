@@ -9,6 +9,7 @@ import type { PasswordResetInput } from '../dto/password-reset-input.dto';
 
 import {
   buildUrl,
+  ctaButton,
   escapeHtml,
   greet,
   greetPlain,
@@ -42,7 +43,7 @@ export const passwordResetTemplate = {
     const body = [
       `<p>${greet(input.name)}</p>`,
       '<p>We received a request to reset your AllServices password.</p>',
-      `<p><a class="cta" href="${escapeHtml(resetUrl)}">Reset password</a></p>`,
+      ctaButton(resetUrl, 'Reset password'),
       `<p class="mono">This link expires at ${escapeHtml(input.expiresAt)} (within one hour).</p>`,
       '<p>If you did not request a reset, you can ignore this email — your password will remain unchanged.</p>',
     ].join('');

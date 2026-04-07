@@ -7,7 +7,7 @@
  */
 import type { ApplicationStatusChangedInput } from '../dto/application-status-changed-input.dto';
 
-import { escapeHtml, greet, greetPlain, renderHtmlLayout, type LayoutOptions } from './_layout';
+import { ctaButton, escapeHtml, greet, greetPlain, renderHtmlLayout, type LayoutOptions } from './_layout';
 
 const STATUS_LABELS: Record<string, string> = {
   UNDER_REVIEW: 'Under Review',
@@ -44,7 +44,7 @@ export const applicationStatusChangedTemplate = {
       `<p>${greet(input.name)}</p>`,
       `<p>Your application for &ldquo;${escapeHtml(input.jobTitle)}&rdquo; has been updated to:</p>`,
       `<p style="font-size:18px;font-weight:600;color:#0b1221">${escapeHtml(humanizeStatus(input.newStatus))}</p>`,
-      `<p><a class="cta" href="${escapeHtml(input.magicLinkUrl)}">View my application</a></p>`,
+      ctaButton(input.magicLinkUrl, 'View my application'),
     ].join('');
     return renderHtmlLayout(body, options);
   },

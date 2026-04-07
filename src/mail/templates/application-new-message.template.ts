@@ -7,7 +7,7 @@
  */
 import type { ApplicationNewMessageInput } from '../dto/application-new-message-input.dto';
 
-import { escapeHtml, greet, greetPlain, renderHtmlLayout, type LayoutOptions } from './_layout';
+import { ctaButton, escapeHtml, greet, greetPlain, renderHtmlLayout, type LayoutOptions } from './_layout';
 
 export const applicationNewMessageTemplate = {
   subject: (jobTitle: string): string => `New message — ${jobTitle}`,
@@ -29,7 +29,7 @@ export const applicationNewMessageTemplate = {
     const body = [
       `<p>${greet(input.name)}</p>`,
       `<p>You have a new message from <strong>${escapeHtml(input.senderName)}</strong> regarding your application for &ldquo;${escapeHtml(input.jobTitle)}&rdquo;.</p>`,
-      `<p><a class="cta" href="${escapeHtml(input.magicLinkUrl)}">View message</a></p>`,
+      ctaButton(input.magicLinkUrl, 'View message'),
     ].join('');
     return renderHtmlLayout(body, options);
   },

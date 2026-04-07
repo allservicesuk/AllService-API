@@ -9,6 +9,7 @@ import type { AccountLockedInput } from '../dto/account-locked-input.dto';
 
 import {
   buildUrl,
+  ctaButton,
   escapeHtml,
   greet,
   greetPlain,
@@ -42,7 +43,7 @@ export const accountLockedTemplate = {
     const supportUrl = buildUrl(options.appWebUrl, SUPPORT_PATH);
     const unlockLine = input.lockedUntil
       ? `<p class="mono">You can try signing in again at ${escapeHtml(input.lockedUntil)}.</p>`
-      : `<p><a class="cta" href="${escapeHtml(supportUrl)}">Contact support</a></p>`;
+      : ctaButton(supportUrl, 'Contact support');
     const body = [
       `<p>${greet(input.name)}</p>`,
       `<p>Your AllServices account has been locked.</p>`,

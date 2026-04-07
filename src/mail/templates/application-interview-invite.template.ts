@@ -7,7 +7,7 @@
  */
 import type { ApplicationInterviewInviteInput } from '../dto/application-interview-invite-input.dto';
 
-import { escapeHtml, greet, greetPlain, renderHtmlLayout, type LayoutOptions } from './_layout';
+import { ctaButton, escapeHtml, greet, greetPlain, renderHtmlLayout, type LayoutOptions } from './_layout';
 
 export const applicationInterviewInviteTemplate = {
   subject: (jobTitle: string): string => `Interview invitation — ${jobTitle}`,
@@ -40,7 +40,7 @@ export const applicationInterviewInviteTemplate = {
       parts.push(`<p><strong>Details:</strong> ${escapeHtml(input.notes.trim())}</p>`);
     }
     parts.push(
-      `<p><a class="cta" href="${escapeHtml(input.magicLinkUrl)}">View my application</a></p>`,
+      ctaButton(input.magicLinkUrl, 'View my application'),
     );
     return renderHtmlLayout(parts.join(''), options);
   },

@@ -69,3 +69,7 @@ export function greet(name: string | undefined): string {
 export function greetPlain(name: string | undefined): string {
   return name && name.trim().length > 0 ? `Hi ${name.trim()},` : 'Hi there,';
 }
+
+export function ctaButton(href: string, label: string): string {
+  return `<p><a href="${escapeHtml(href)}" style="display:inline-block;margin:20px 0;padding:12px 24px;background:#ff8fbb;color:#000000;text-decoration:none;border-radius:8px;font-weight:600">${escapeHtml(label)}</a></p>`;
+}

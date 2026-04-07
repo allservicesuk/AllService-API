@@ -7,7 +7,7 @@
  */
 import type { ApplicationReceivedInput } from '../dto/application-received-input.dto';
 
-import { escapeHtml, greet, greetPlain, renderHtmlLayout, type LayoutOptions } from './_layout';
+import { ctaButton, escapeHtml, greet, greetPlain, renderHtmlLayout, type LayoutOptions } from './_layout';
 
 export const applicationReceivedTemplate = {
   subject: (jobTitle: string): string => `Application received — ${jobTitle}`,
@@ -32,7 +32,7 @@ export const applicationReceivedTemplate = {
       `<p>${greet(input.name)}</p>`,
       `<p>Thank you for applying to &ldquo;${escapeHtml(input.jobTitle)}&rdquo; at AllServices. Your application has been received and is now under review.</p>`,
       '<p>You can check your application status and communicate with our hiring team at any time:</p>',
-      `<p><a class="cta" href="${escapeHtml(input.magicLinkUrl)}">View my application</a></p>`,
+      ctaButton(input.magicLinkUrl, 'View my application'),
       '<p class="mono">Please keep this link private — it provides direct access to your application.</p>',
     ].join('');
     return renderHtmlLayout(body, options);

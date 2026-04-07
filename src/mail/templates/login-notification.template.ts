@@ -9,6 +9,7 @@ import type { LoginNotificationInput } from '../dto/login-notification-input.dto
 
 import {
   buildUrl,
+  ctaButton,
   escapeHtml,
   greet,
   greetPlain,
@@ -63,7 +64,7 @@ export const loginNotificationTemplate = {
       `IP fingerprint: ${escapeHtml(input.ipHash)}`,
       '</p>',
       '<p>If this was you, no action is needed.</p>',
-      `<p><a class="cta" href="${escapeHtml(revokeUrl)}">Revoke session</a></p>`,
+      ctaButton(revokeUrl, 'Revoke session'),
     ].join('');
     return renderHtmlLayout(body, options);
   },

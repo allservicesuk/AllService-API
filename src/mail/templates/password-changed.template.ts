@@ -9,6 +9,7 @@ import type { PasswordChangedInput } from '../dto/password-changed-input.dto';
 
 import {
   buildUrl,
+  ctaButton,
   escapeHtml,
   greet,
   greetPlain,
@@ -42,7 +43,7 @@ export const passwordChangedTemplate = {
       `<p>Your AllServices password was changed at ${escapeHtml(input.changedAt)}.</p>`,
       `<p class="mono">IP fingerprint: ${escapeHtml(input.ipHash)}</p>`,
       `<p>If this was not you, contact support immediately.</p>`,
-      `<p><a class="cta" href="${escapeHtml(supportUrl)}">Contact support</a></p>`,
+      ctaButton(supportUrl, 'Contact support'),
     ].join('');
     return renderHtmlLayout(body, options);
   },

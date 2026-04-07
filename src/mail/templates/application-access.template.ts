@@ -7,7 +7,7 @@
  */
 import type { ApplicationAccessInput } from '../dto/application-access-input.dto';
 
-import { escapeHtml, greet, greetPlain, renderHtmlLayout, type LayoutOptions } from './_layout';
+import { ctaButton, escapeHtml, greet, greetPlain, renderHtmlLayout, type LayoutOptions } from './_layout';
 
 export const applicationAccessTemplate = {
   subject: (jobTitle: string): string => `Your application access link — ${jobTitle}`,
@@ -34,7 +34,7 @@ export const applicationAccessTemplate = {
       `<p>${greet(input.name)}</p>`,
       `<p>You requested access to your application for &ldquo;${escapeHtml(input.jobTitle)}&rdquo; at AllServices.</p>`,
       '<p>Use the button below to view your application status, messages, and documents:</p>',
-      `<p><a class="cta" href="${escapeHtml(input.magicLinkUrl)}">View my application</a></p>`,
+      ctaButton(input.magicLinkUrl, 'View my application'),
       '<p class="mono">This link will expire in 7 days. If you did not request this, you can safely ignore this email.</p>',
     ].join('');
     return renderHtmlLayout(body, options);

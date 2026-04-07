@@ -9,6 +9,7 @@ import type { MfaEnabledInput } from '../dto/mfa-enabled-input.dto';
 
 import {
   buildUrl,
+  ctaButton,
   escapeHtml,
   greet,
   greetPlain,
@@ -43,7 +44,7 @@ export const mfaEnabledTemplate = {
       `<p>${greet(input.name)}</p>`,
       '<p>Two-factor authentication is now active on your AllServices account.</p>',
       '<p>Store your recovery codes somewhere safe — you will need them if you lose access to your authenticator app.</p>',
-      `<p><a class="cta" href="${escapeHtml(securityUrl)}">Manage security settings</a></p>`,
+      ctaButton(securityUrl, 'Manage security settings'),
       '<p>If you did not enable this, contact support immediately.</p>',
     ].join('');
     return renderHtmlLayout(body, options);

@@ -9,6 +9,7 @@ import type { VerificationInput } from '../dto/verification-input.dto';
 
 import {
   buildUrl,
+  ctaButton,
   escapeHtml,
   greet,
   greetPlain,
@@ -45,7 +46,7 @@ export const verificationTemplate = {
     const body = [
       `<p>${greet(input.name)}</p>`,
       '<p>Welcome to AllServices. Please verify your email address to activate your account.</p>',
-      `<p><a class="cta" href="${escapeHtml(verifyUrl)}">Verify email</a></p>`,
+      ctaButton(verifyUrl, 'Verify email'),
       `<p class="mono">This link expires at ${escapeHtml(input.expiresAt)}.</p>`,
       '<p>If you did not create this account, you can safely ignore this message.</p>',
     ].join('');
