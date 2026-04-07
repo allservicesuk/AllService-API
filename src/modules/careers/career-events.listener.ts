@@ -3,10 +3,13 @@
  * Copyright (c) 2026. All rights reserved.
  * Developer: linkst
  *
- * Listens to career domain events and dispatches transactional emails via the mail service.
+ * Listens to career domain events and dispatches transactional emails and Discord notifications.
  */
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { ConfigType } from '@nestjs/config';
 import { OnEvent } from '@nestjs/event-emitter';
+
+import careersConfig from '@config/careers.config';
 
 import { MailService } from '../../mail/mail.service';
 
@@ -16,6 +19,10 @@ interface ApplicationSubmittedEvent {
   readonly applicationId: string;
   readonly applicantName: string;
   readonly applicantEmail: string;
+  readonly applicantPhone: string | null;
+  readonly coverLetter: string | null;
+  readonly customResponses: Record<string, string | number | boolean> | null;
+  readonly hasCV: boolean;
   readonly jobPostingId: string;
   readonly jobTitle: string;
   readonly magicLinkUrl: string;
@@ -39,6 +46,9 @@ interface AdminMessageSentEvent {
   readonly senderName: string;
 }
 
+const COVER_LETTER_MAX_DISPLAY = 500;
+const DISCORD_COLOUR_GREEN = 0x22c55e;
+
 @Injectable()
 export class CareerEventsListener {
   private readonly logger = new Logger(CareerEventsListener.name);
@@ -46,6 +56,7 @@ export class CareerEventsListener {
   constructor(
     private readonly mailService: MailService,
     private readonly tokenService: ApplicantTokenService,
+    @Inject(careersConfig.KEY) private readonly config: ConfigType<typeof careersConfig>,
   ) {}
 
   @OnEvent('career.application.submitted')
@@ -57,6 +68,8 @@ export class CareerEventsListener {
       magicLinkUrl: event.magicLinkUrl,
     });
     this.logger.log(`career.event.submitted.email_sent applicationId=${event.applicationId}`);
+
+    await this.sendDiscordApplicationNotification(event);
   }
 
   @OnEvent('career.application.status_changed')
@@ -106,5 +119,78 @@ export class CareerEventsListener {
       magicLinkUrl,
     });
     this.logger.log(`career.event.admin_message.email_sent applicationId=${event.applicationId}`);
+  }
+
+  private async sendDiscordApplicationNotification(
+    event: ApplicationSubmittedEvent,
+  ): Promise<void> {
+    if (!this.config.discordWebhookUrl) {
+      return;
+    }
+
+    const fields: Array<{ name: string; value: string; inline?: boolean }> = [
+      { name: 'Name', value: event.applicantName, inline: true },
+      { name: 'Email', value: event.applicantEmail, inline: true },
+    ];
+
+    if (event.applicantPhone) {
+      fields.push({ name: 'Phone', value: event.applicantPhone, inline: true });
+    }
+
+    fields.push({ name: 'Position', value: event.jobTitle, inline: true });
+    fields.push({ name: 'CV Attached', value: event.hasCV ? 'Yes' : 'No', inline: true });
+    fields.push({ name: 'Application ID', value: event.applicationId, inline: false });
+
+    if (event.coverLetter) {
+      const truncated =
+        event.coverLetter.length > COVER_LETTER_MAX_DISPLAY
+          ? `${event.coverLetter.slice(0, COVER_LETTER_MAX_DISPLAY)}...`
+          : event.coverLetter;
+      fields.push({ name: 'Cover Letter', value: truncated, inline: false });
+    }
+
+    if (event.customResponses) {
+      const entries = Object.entries(event.customResponses);
+      for (const [key, value] of entries) {
+        fields.push({
+          name: key.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()),
+          value: String(value),
+          inline: true,
+        });
+      }
+    }
+
+    const payload = {
+      embeds: [
+        {
+          title: 'New Application Received',
+          color: DISCORD_COLOUR_GREEN,
+          fields,
+          timestamp: new Date().toISOString(),
+          footer: { text: 'AllServices Careers' },
+        },
+      ],
+    };
+
+    try {
+      const response = await fetch(this.config.discordWebhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        this.logger.warn(
+          `career.event.discord.failed applicationId=${event.applicationId} status=${response.status}`,
+        );
+      } else {
+        this.logger.log(`career.event.discord.sent applicationId=${event.applicationId}`);
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'unknown';
+      this.logger.warn(
+        `career.event.discord.error applicationId=${event.applicationId} reason=${message}`,
+      );
+    }
   }
 }

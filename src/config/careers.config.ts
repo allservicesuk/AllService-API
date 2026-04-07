@@ -12,6 +12,7 @@ export interface CareersConfig {
   readonly magicLinkTtlSeconds: number;
   readonly verifyCodeTtlSeconds: number;
   readonly applyWebUrl: string;
+  readonly discordWebhookUrl: string;
 }
 
 export default registerAs('careers', (): CareersConfig => {
@@ -22,5 +23,6 @@ export default registerAs('careers', (): CareersConfig => {
     magicLinkTtlSeconds: magicLinkTtl ? parseInt(magicLinkTtl, 10) : 604800,
     verifyCodeTtlSeconds: verifyCodeTtl ? parseInt(verifyCodeTtl, 10) : 600,
     applyWebUrl: process.env['CAREERS_APPLY_WEB_URL'] ?? 'https://apply.allservices.cc',
+    discordWebhookUrl: process.env['CAREERS_DISCORD_WEBHOOK_URL'] ?? '',
   };
 });
